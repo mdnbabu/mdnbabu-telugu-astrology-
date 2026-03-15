@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>మీ జాతక ఫలితాలు</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 20px; }
+        .report-card { background: white; max-width: 450px; margin: auto; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .header { background: #6a0dad; color: white; padding: 20px; text-align: center; }
+        .content { padding: 25px; }
+        .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .label { font-weight: bold; color: #555; }
+        .value { color: #2e7d32; font-weight: bold; }
+        .shani-box { margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 10px; border-left: 5px solid #ff9800; font-size: 14px; }
+        .footer { text-align: center; padding: 20px; font-size: 13px; color: #888; }
+    </style>
+</head>
+<body>
+
+<div class="report-card">
+    <div class="header">
+        <h2>జాతక ఫలితాలు</h2>
+    </div>
+    <div class="content">
+        <div class="row">
+            <span class="label">నక్షత్రం:</span>
+            <span class="value">{{ nakshatra }}</span>
+        </div>
+        <div class="row">
+            <span class="label">పాదం:</span>
+            <span class="value">{{ pada }}</span>
+        </div>
+        <div class="row">
+            <span class="label">రాశి:</span>
+            <span class="value">{{ rasi }}</span>
+        </div>
+        <div class="row">
+            <span class="label">లగ్నం:</span>
+            <span class="value">{{ lagna }}</span>
+        </div>
+        
+        <div class="shani-box">
+            <strong>శని ప్రభావం:</strong><br>
+            {{ shani_status }}
+        </div>
+    </div>
+    <div class="footer">
+        మరింత సమాచారం కోసం మమ్మల్ని సంప్రదించండి.<br>
+        వేదిక్ ఆస్ట్రో సొల్యూషన్స్
+    </div>
+</div>
+
+</body>
+</html>
