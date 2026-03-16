@@ -1,44 +1,63 @@
-<!DOCTYPE html>
-<html lang="te">
+<!DOCTYPE html><html lang="te">
 <head>
 <meta charset="UTF-8">
-<title>చెల్లింపు</title>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>చెల్లింపు</title><style>
 
-<body>
+body{
+font-family: Arial, sans-serif;
+background:#f3e5f5;
+text-align:center;
+padding-top:80px;
+}
 
-<h3>చెల్లింపు కొనసాగుతోంది...</h3>
+.container{
+background:white;
+max-width:420px;
+margin:auto;
+padding:30px;
+border-radius:15px;
+box-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
 
-<script>
+h2{
+color:#6a1b9a;
+font-size:26px;
+margin-bottom:10px;
+}
 
-var options = {
-    "key": "{{ key_id }}",
-    "amount": "1100",
-    "currency": "INR",
-    "name": "Vedic Astro Solutions",
-    "description": "Horoscope Report",
-    "handler": function (response) {
+p{
+font-size:18px;
+color:#444;
+margin-bottom:30px;
+}
 
-        var form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/results";
+.paybtn{
+display:block;
+background:#8e24aa;
+color:white;
+font-size:22px;
+padding:18px;
+border-radius:10px;
+text-decoration:none;
+font-weight:bold;
+}
 
-        var input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "payment_id";
-        input.value = response.razorpay_payment_id;
+.paybtn:hover{
+background:#6a1b9a;
+}
 
-        form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    }
-};
+.footer{
+margin-top:20px;
+font-size:12px;
+color:#777;
+}
 
-var rzp = new Razorpay(options);
-rzp.open();
+</style></head><body><div class="container"><h2>జ్యోతిష్య నివేదిక</h2><p>మీ జాతక వివరాలను చూడటానికి ₹11 చెల్లించండి</p><a class="paybtn" href="https://rzp.io/l/YOUR_LINK_HERE">₹11 చెల్లించండి
 
-</script>
+</a><div class="footer">వేదిక్ ఆస్ట్రో సొల్యూషన్స్
+<br>
+ప్రొఫెసర్ నారాయణ బాబు
 
-</body>
+</div></div></body>
 </html>
