@@ -6,12 +6,12 @@
     <title>వేదిక్ ఆస్ట్రో సొల్యూషన్స్</title>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; text-align: center; padding: 20px; }
-        .container { background: white; max-width: 400px; margin: auto; padding: 20px; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h2 { color: #6a0dad; }
+        .container { background: white; max-width: 400px; margin: auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        h2 { color: #6a0dad; margin-bottom: 5px; }
         label { display: block; margin-top: 15px; font-weight: bold; text-align: left; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #6a0dad; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; margin-top: 20px; font-size: 16px; cursor: pointer; }
-        .footer { margin-top: 20px; font-size: 12px; color: #777; }
+        input { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #6a0dad; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; margin-top: 25px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .footer { margin-top: 20px; font-size: 12px; color: #888; }
     </style>
 </head>
 <body>
@@ -31,13 +31,18 @@
         <input type="time" name="tob" required>
 
         <label>పుట్టిన ప్రాంతం:</label>
-        <input type="text" name="city" placeholder="ఉదా: విజయవాడ" required>
+        <input list="city-list" name="city" placeholder="నగరం పేరు టైప్ చేయండి..." required>
+        <datalist id="city-list">
+            {% for city in cities %}
+            <option value="{{ city }}">
+            {% endfor %}
+        </datalist>
 
         <button type="submit">వివరాలు పొందండి (₹11)</button>
     </form>
 
     <div class="footer">
-        © 2026 వేదిక్ ఆస్ట్రో సొల్యూషన్స్ | రిజిస్టర్డ్ సర్వీస్
+        © 2026 వేదిక్ ఆస్ట్రో సొల్యూషన్స్ | ప్రొఫెసర్ నారాయణ బాబు
     </div>
 </div>
 
