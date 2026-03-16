@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from flask import Flask, render_template, request
 import json
 import os
@@ -6,32 +7,35 @@ import os
 app = Flask(__name__)
 
 
+# Load cities from JSON
 def load_cities():
     try:
-        with open("cities.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        cities = []
-
-        # Extract cities from states
-        for state in data:
-            for city in data[state]:
-                cities.append(city)
-
-        return cities
-
-    except Exception as e:
-        # Backup list if JSON fails
-        return ["విజయవాడ", "హైదరాబాద్", "గుంటూరు", "విశాఖపట్నం", "తిరుపతి"]
+        with open('cities.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return {}
 
 
-@app.route("/")
+# Home page
+@app.route('/')
 def index():
-    cities_list = load_cities()
-    return render_template("index.html", cities=cities_list)
+
+    cities_data = load_cities()
+
+    city_list = []
+
+    # Flatten state -> city structure
+    for state in cities_data:
+        for city in cities_data[state]:
+            city_list.append(city)
+
+    city_list.sort()
+
+    return render_template("index.html", cities=city_list)
 
 
-@app.route("/calculate", methods=["POST"])
+# Form submit → Payment page
+@app.route('/calculate', methods=['POST'])
 def calculate():
 
     name = request.form.get("name")
@@ -48,10 +52,10 @@ def calculate():
     )
 
 
-@app.route("/results")
+# Results page (temporary demo values)
+@app.route('/results')
 def results():
 
-    # Temporary test data
     nakshatra = "అశ్విని"
     pada = "1"
     rasi = "మేషం"
@@ -68,11 +72,18 @@ def results():
     )
 
 
-@app.route("/ping")
+# Ping route for cron-job
+@app.route('/ping')
 def ping():
     return "alive"
 
 
+# Start server
 if __name__ == "__main__":
+
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )
