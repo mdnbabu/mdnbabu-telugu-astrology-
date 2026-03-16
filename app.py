@@ -20,9 +20,19 @@ def index():
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    # Insert your real Razorpay link below
-    return redirect("https://rzp.io/l/your_actual_link")
 
+    name = request.form.get("name")
+    dob = request.form.get("dob")
+    tob = request.form.get("tob")
+    city = request.form.get("city")
+
+    return render_template(
+        "payment.html",
+        name=name,
+        dob=dob,
+        tob=tob,
+        city=city
+    )
 @app.route('/results')
 def results():
     return "మీ జాతక ఫలితాలు లోడ్ అవుతున్నాయి..."
