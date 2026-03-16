@@ -13,10 +13,12 @@ def load_cities():
         # Emergency backup to keep the menu active
         return ["విజయవాడ", "హైదరాబాద్", "గుంటూరు", "విశాఖపట్నం", "తిరుపతి"]
 
+
 @app.route('/')
 def index():
     cities_list = load_cities()
     return render_template('index.html', cities=cities_list)
+
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
@@ -33,6 +35,8 @@ def calculate():
         tob=tob,
         city=city
     )
+
+
 @app.route('/results')
 def results():
 
@@ -51,12 +55,13 @@ def results():
         lagna=lagna,
         shani_status=shani_status
     )
-    @app.route("/ping")
+
+
+@app.route("/ping")
 def ping():
     return "alive"
 
+
 if __name__ == "__main__":
-    # This solves the Port Scan Timeout error
     port = int(os.environ.get("PORT", 10000))
     app.run(host='0.0.0.0', port=port)
-    
