@@ -1,26 +1,37 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request
 import json
 import os
 
 app = Flask(__name__)
 
+
 def load_cities():
     try:
-        with open('cities.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except:
-        # Emergency backup to keep the menu active
+        with open("cities.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        cities = []
+
+        # Extract cities from states
+        for state in data:
+            for city in data[state]:
+                cities.append(city)
+
+        return cities
+
+    except Exception as e:
+        # Backup list if JSON fails
         return ["విజయవాడ", "హైదరాబాద్", "గుంటూరు", "విశాఖపట్నం", "తిరుపతి"]
 
 
-@app.route('/')
+@app.route("/")
 def index():
     cities_list = load_cities()
-    return render_template('index.html', cities=cities_list)
+    return render_template("index.html", cities=cities_list)
 
 
-@app.route('/calculate', methods=['POST'])
+@app.route("/calculate", methods=["POST"])
 def calculate():
 
     name = request.form.get("name")
@@ -37,7 +48,7 @@ def calculate():
     )
 
 
-@app.route('/results')
+@app.route("/results")
 def results():
 
     # Temporary test data
@@ -64,4 +75,4 @@ def ping():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host="0.0.0.0", port=port)
