@@ -51,6 +51,9 @@ def results():
         lagna=lagna,
         shani_status=shani_status
     )
+    @app.route("/ping")
+def ping():
+    return "alive"
 
 if __name__ == "__main__":
     # This solves the Port Scan Timeout error
