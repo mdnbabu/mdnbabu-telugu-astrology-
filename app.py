@@ -5,42 +5,26 @@ import os
 
 app = Flask(__name__)
 
-# Load your cities.json from the repository root
-def load_cities():
-    try:
-        with open('cities.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"City Load Error: {e}")
-        return ["విజయవాడ", "హైదరాబాద్", "గుంటూరు"]
-
-CITIES_LIST = load_cities()
+# This backup list ensures the menu is ALWAYS active for your users
+BACKUP_CITIES = ["Vijayawada", "Hyderabad", "Guntur", "Visakhapatnam", "Tirupati", "Nellore", "Kurnool", "Kakinada", "Rajahmundry"]
 
 @app.route('/')
 def index():
-    return render_template('index.html', cities=CITIES_LIST)
+    # Attempt to load the full JSON, otherwise use the backup
+    try:
+        with open('cities.json', 'r', encoding='utf-8') as f:
+            cities = json.load(f)
+    except:
+        cities = BACKUP_CITIES
+    
+    return render_template('index.html', cities=cities)
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    # Capture inputs safely
-    name = request.form.get('name')
-    # REVENUE: Replace the link below with your specific Razorpay Payment Link
-    return redirect("https://rzp.io/l/your_actual_link_here")
-
-@app.route('/results')
-def results():
-    # Landing page after successful ₹11 payment
-    data = {
-        "nakshatra": "లెక్కించబడుతోంది...",
-        "rasi": "రాశి వివరాలు",
-        "pada": "1",
-        "lagna": "లగ్నం",
-        "shani_status": "శని ప్రభావం వివరాలు ఇక్కడ కనిపిస్తాయి."
-    }
-    return render_template('result.html', **data)
+    # Final Revenue Bridge: Put your Razorpay link here
+    return redirect("https://rzp.io/l/your_actual_link")
 
 if __name__ == "__main__":
-    # Render specifically looks for the PORT environment variable
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
     
