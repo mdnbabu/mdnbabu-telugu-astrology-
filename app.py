@@ -35,7 +35,22 @@ def calculate():
     )
 @app.route('/results')
 def results():
-    return "మీ జాతక ఫలితాలు లోడ్ అవుతున్నాయి..."
+
+    # Temporary test data
+    nakshatra = "అశ్విని"
+    pada = "1"
+    rasi = "మేషం"
+    lagna = "వృషభం"
+    shani_status = "శని ప్రభావం లేదు"
+
+    return render_template(
+        "results.html",
+        nakshatra=nakshatra,
+        pada=pada,
+        rasi=rasi,
+        lagna=lagna,
+        shani_status=shani_status
+    )
 
 if __name__ == "__main__":
     # This solves the Port Scan Timeout error
