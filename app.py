@@ -40,6 +40,7 @@ def results():
     return render_template('result.html', **data)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
+    # Render specifically looks for the PORT environment variable
+    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
     
