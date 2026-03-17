@@ -3,11 +3,18 @@
 from flask import Flask, render_template, request
 import json
 import os
+import razorpay
 
 app = Flask(__name__)
 
+# Razorpay setup
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
 
-# Load cities from JSON
+client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+
+
+# Load cities
 def load_cities():
     try:
         with open('cities.json', 'r', encoding='utf-8') as f:
@@ -24,7 +31,6 @@ def index():
 
     city_list = []
 
-    # Flatten state -> city structure
     for state in cities_data:
         for city in cities_data[state]:
             city_list.append(city)
@@ -34,7 +40,7 @@ def index():
     return render_template("index.html", cities=city_list)
 
 
-# Form submit → Payment page
+# Form → Payment
 @app.route('/calculate', methods=['POST'])
 def calculate():
 
@@ -43,19 +49,36 @@ def calculate():
     tob = request.form.get("tob")
     city = request.form.get("city")
 
+    # ✅ ₹1 TEST AMOUNT (100 paise)
+    amount = 100
+
+    order = client.order.create({
+        "amount": amount,
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
     return render_template(
         "payment.html",
         name=name,
         dob=dob,
         tob=tob,
-        city=city
+        city=city,
+        order_id=order["id"],
+        key_id=RAZORPAY_KEY_ID,
+        amount=amount
     )
 
 
-# Results page (temporary demo values)
-@app.route('/results')
+# Result page (AFTER PAYMENT)
+@app.route('/results', methods=['POST'])
 def results():
 
+    # 🔒 Payment verification
+    if not request.form.get("razorpay_payment_id"):
+        return "Payment required", 403
+
+    # Temporary values (later we connect real logic)
     nakshatra = "అశ్విని"
     pada = "1"
     rasi = "మేషం"
@@ -72,7 +95,7 @@ def results():
     )
 
 
-# Ping route for cron-job
+# Ping (optional)
 @app.route('/ping')
 def ping():
     return "alive"
