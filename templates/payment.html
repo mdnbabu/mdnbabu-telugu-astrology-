@@ -1,62 +1,44 @@
 <!DOCTYPE html>
 <html lang="te">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>చెల్లింపు</title>
 
 <style>
-
 body{
-font-family: Arial, sans-serif;
-background:#f3e5f5;
-text-align:center;
-padding-top:80px;
+    font-family: Arial, sans-serif;
+    background:#f3e5f5;
+    text-align:center;
+    padding-top:80px;
 }
 
 .container{
-background:white;
-max-width:420px;
-margin:auto;
-padding:30px;
-border-radius:15px;
-box-shadow:0 4px 20px rgba(0,0,0,0.2);
+    background:white;
+    max-width:420px;
+    margin:auto;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.2);
 }
 
 h2{
-color:#6a1b9a;
-font-size:26px;
-margin-bottom:10px;
+    color:#6a1b9a;
+    font-size:26px;
+    margin-bottom:10px;
 }
 
 p{
-font-size:18px;
-color:#444;
-margin-bottom:30px;
-}
-
-.paybtn{
-display:block;
-background:#8e24aa;
-color:white;
-font-size:22px;
-padding:18px;
-border-radius:10px;
-text-decoration:none;
-font-weight:bold;
-}
-
-.paybtn:hover{
-background:#6a1b9a;
+    font-size:18px;
+    color:#444;
+    margin-bottom:30px;
 }
 
 .footer{
-margin-top:20px;
-font-size:12px;
-color:#777;
+    margin-top:20px;
+    font-size:12px;
+    color:#777;
 }
-
 </style>
 
 </head>
@@ -67,8 +49,24 @@ color:#777;
 
 <h2>జ్యోతిష్య నివేదిక</h2>
 
-<p>మీ జాతక వివరాలను చూడటానికి ₹11 చెల్లించండి</p>
-<a class="paybtn">Service will start soon</a>
+<p>మీ జాతక వివరాలను చూడటానికి ₹1 చెల్లించండి</p>
+
+<!-- ✅ Razorpay Payment Button -->
+<form action="/results" method="POST">
+
+<script
+    src="https://checkout.razorpay.com/v1/checkout.js"
+    data-key="{{ key_id }}"
+    data-amount="{{ amount }}"
+    data-currency="INR"
+    data-order_id="{{ order_id }}"
+    data-buttontext="₹1 చెల్లించండి"
+    data-name="వేదిక్ ఆస్ట్రో సొల్యూషన్స్"
+    data-description="జ్యోతిష్య నివేదిక"
+    data-theme.color="#8e24aa">
+</script>
+
+</form>
 
 <div class="footer">
 వేదిక్ ఆస్ట్రో సొల్యూషన్స్
