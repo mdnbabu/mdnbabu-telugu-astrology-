@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>వేదిక్ ఆస్ట్రో సొల్యూషన్స్</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; text-align: center; padding: 20px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding: 20px; }
         .container { background: white; max-width: 400px; margin: auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         h2 { color: #6a0dad; margin-bottom: 5px; }
-        label { display: block; margin-top: 15px; font-weight: bold; text-align: left; }
-        input { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; font-family: inherit; }
+        label { display: block; margin-top: 15px; font-weight: bold; text-align: left; font-size: 15px; }
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; font-family: inherit; background: white; }
+        input:focus, select:focus { border-color: #6a0dad; outline: none; }
+        .date-row { display: flex; gap: 8px; margin-top: 5px; }
+        .date-row select { width: 33%; }
         button { background-color: #6a0dad; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; margin-top: 25px; font-size: 18px; font-weight: bold; cursor: pointer; font-family: inherit; }
         button:hover { background-color: #7e22ce; }
         .footer { margin-top: 20px; font-size: 12px; color: #888; }
@@ -28,21 +31,48 @@
                placeholder="మీ పేరు నమోదు చేయండి" required>
 
         <label>పుట్టిన తేదీ:</label>
-        <input type="date" name="dob" required>
+        <div class="date-row">
+            <select name="day" required>
+                <option value="">రోజు</option>
+                {% for d in range(1, 32) %}
+                <option value="{{ d }}">{{ d }}</option>
+                {% endfor %}
+            </select>
+            <select name="month" required>
+                <option value="">నెల</option>
+                <option value="1">జనవరి</option>
+                <option value="2">ఫిబ్రవరి</option>
+                <option value="3">మార్చి</option>
+                <option value="4">ఏప్రిల్</option>
+                <option value="5">మే</option>
+                <option value="6">జూన్</option>
+                <option value="7">జులై</option>
+                <option value="8">ఆగస్టు</option>
+                <option value="9">సెప్టెంబర్</option>
+                <option value="10">అక్టోబర్</option>
+                <option value="11">నవంబర్</option>
+                <option value="12">డిసెంబర్</option>
+            </select>
+            <select name="year" required>
+                <option value="">సంవత్సరం</option>
+                {% for y in range(2025, 1899, -1) %}
+                <option value="{{ y }}">{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
         <label>పుట్టిన సమయం:</label>
         <input type="time" name="tob" required>
 
         <label>పుట్టిన ప్రాంతం (సమీప పట్టణం):</label>
-        <input list="city-list" name="city"
-               placeholder="నగరం పేరు టైప్ చేయండి..." required>
-        <datalist id="city-list">
+        <select name="city" required>
+            <option value="">నగరం ఎంచుకోండి</option>
             {% for city in cities %}
-            <option value="{{ city }}">
+            <option value="{{ city }}">{{ city }}</option>
             {% endfor %}
-        </datalist>
+        </select>
 
-        <button type="submit">వివరాలు పొందండి (₹1)</button>
+        <button type="submit">వివరాలు పొందండి (₹11)</button>
     </form>
 
     <div class="footer">
@@ -52,4 +82,5 @@
 </div>
 
 </body>
-</html>
+    </html>
+    
