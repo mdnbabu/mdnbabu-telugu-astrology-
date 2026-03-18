@@ -1,84 +1,52 @@
 <!DOCTYPE html>
 <html lang="te">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>చెల్లింపు</title>
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    background:#f3e5f5;
-    text-align:center;
-    padding-top:80px;
-}
-
-.container{
-    background:white;
-    max-width:420px;
-    margin:auto;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 4px 20px rgba(0,0,0,0.2);
-}
-
-h2{
-    color:#6a1b9a;
-    font-size:26px;
-    margin-bottom:10px;
-}
-
-p{
-    font-size:18px;
-    color:#444;
-    margin-bottom:30px;
-}
-
-.footer{
-    margin-top:20px;
-    font-size:12px;
-    color:#777;
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>చెల్లింపు</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f3e5f5; text-align: center; padding: 50px 20px; }
+        .container { background: white; max-width: 420px; margin: auto; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        h2 { color: #6a1b9a; font-size: 24px; margin-bottom: 10px; }
+        .details { background: #f9f5ff; border-radius: 10px; padding: 14px; margin: 16px 0; text-align: left; font-size: 14px; line-height: 2; }
+        .details span { font-weight: bold; color: #6a0dad; }
+        p { font-size: 16px; color: #444; margin-bottom: 20px; }
+        .footer { margin-top: 20px; font-size: 12px; color: #777; }
+    </style>
 </head>
-
 <body>
-
 <div class="container">
+    <h2>జ్యోతిష్య నివేదిక</h2>
 
-<h2>జ్యోతిష్య నివేదిక</h2>
+    <div class="details">
+        పేరు: <span>{{ name }}</span><br>
+        తేదీ: <span>{{ dob }}</span><br>
+        సమయం: <span>{{ tob }}</span><br>
+        ప్రాంతం: <span>{{ city }}</span>
+    </div>
 
-<p>మీ జాతక వివరాలను చూడటానికి ₹1 చెల్లించండి</p>
+    <p>మీ జాతక వివరాలను చూడటానికి ₹1 చెల్లించండి</p>
 
-<!-- ✅ Razorpay Payment Button -->
-<form action="/results" method="POST">
+    <!-- Razorpay Checkout -->
+    <form action="/results" method="POST">
+        <script
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            data-key="{{ key_id }}"
+            data-amount="{{ amount }}"
+            data-currency="INR"
+            data-order_id="{{ order_id }}"
+            data-buttontext="₹1 చెల్లించండి"
+            data-name="వేదిక్ ఆస్ట్రో సొల్యూషన్స్"
+            data-description="జ్యోతిష్య నివేదిక"
+            data-theme.color="#6a0dad">
+        </script>
+    </form>
 
-<script
-    src="https://checkout.razorpay.com/v1/checkout.js"
-    data-key="{{ key_id }}"
-    data-amount="{{ amount }}"
-    data-currency="INR"
-    data-order_id="{{ order_id }}"
-    data-buttontext="₹1 చెల్లించండి"
-    data-name="వేదిక్ ఆస్ట్రో సొల్యూషన్స్"
-    data-description="జ్యోతిష్య నివేదిక"
-    data-theme.color="#8e24aa">
-</script>
-
-</form>
-
-<div class="footer">
-వేదిక్ ఆస్ట్రో సొల్యూషన్స్
-<br>
-prof.M.D.Narayana Babu
-<br>
-సంప్రదించండి: +91 918985368696
-<br>
-Email: mdnbabu@yahoo.com
+    <div class="footer">
+        వేదిక్ ఆస్ట్రో సొల్యూషన్స్ | ప్రొఫెసర్ నారాయణ బాబు<br>
+        +91 8985368696 | mdnbabu@yahoo.com
+    </div>
 </div>
-
-</div>
-
 </body>
 </html>
