@@ -2,7 +2,6 @@
 
 import os
 import json
-import math
 import razorpay
 import swisseph as swe
 import pytz
@@ -13,11 +12,11 @@ from flask import Flask, render_template, request, session
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "vedic-telugu-2026")
 
-# Swiss Ephemeris setup
+# Swiss Ephemeris
 swe.set_sid_mode(swe.SIDM_LAHIRI)
-swe.set_ephe_path(" ")
+swe.set_ephe_path(".")
 
-# ── Razorpay – created inside route, NOT at startup ──────────────────────────
+# ── Razorpay – inside route, NOT at startup ──────────────────────────────────
 def get_razorpay_client():
     key_id     = os.environ.get("RAZORPAY_KEY_ID", "")
     key_secret = os.environ.get("RAZORPAY_KEY_SECRET", "")
@@ -55,10 +54,8 @@ def load_cities():
             data = json.load(f)
         city_list = []
         for state, cities in data.items():
-            for city_name, city_info in cities.items():
+            for city_name in cities:
                 city_list.append(city_name)
-                if "roman" in city_info:
-                    city_list.append(city_info["roman"])
         city_list.sort()
         return city_list
     except Exception as e:
@@ -75,7 +72,7 @@ def get_city_coords(city_name):
                     return info["lat"], info["lon"]
     except:
         pass
-    return 17.3850, 78.4867  # Default Hyderabad
+    return 17.3850, 78.4867
 
 # ── Keep Render awake ─────────────────────────────────────────────────────────
 @app.route('/ping')
@@ -92,14 +89,15 @@ def index():
 @app.route('/calculate', methods=['POST'])
 def calculate():
     try:
-        session['name'] = request.form.get("name", "")
-        session['dob']  = request.form.get("dob", "")
-        session['tob']  = request.form.get("tob", "")
-        session['city'] = request.form.get("city", "")
+        session['name']  = request.form.get("name", "")
+        session['day']   = request.form.get("day", "1")
+        session['month'] = request.form.get("month", "1")
+        session['year']  = request.form.get("year", "2000")
+        session['tob']   = request.form.get("tob", "")
+        session['city']  = request.form.get("city", "")
 
-        # ✅ TEST: ₹1 = 100 paise
-        # For live change 100 → 1100 (₹11)
-        amount = 100
+        # ✅ LIVE: ₹11 = 1100 paise
+        amount = 1100
 
         client = get_razorpay_client()
         order  = client.order.create({
@@ -111,9 +109,6 @@ def calculate():
         return render_template(
             "payment.html",
             name=session['name'],
-            dob=session['dob'],
-            tob=session['tob'],
-            city=session['city'],
             order_id=order["id"],
             key_id=os.environ.get("RAZORPAY_KEY_ID", ""),
             amount=amount
@@ -123,7 +118,7 @@ def calculate():
         print(f"Calculate error: {e}")
         return f"<h3>లోపం జరిగింది: {str(e)}</h3><a href='/'>తిరిగి వెళ్ళు</a>", 500
 
-# ── Results – real Swiss Ephemeris calculations ───────────────────────────────
+# ── Results ───────────────────────────────────────────────────────────────────
 @app.route('/results', methods=['GET', 'POST'])
 def results():
     try:
@@ -133,17 +128,15 @@ def results():
         if not payment_id:
             return "<h3>చెల్లింపు అవసరం</h3><a href='/'>తిరిగి వెళ్ళు</a>", 403
 
-        name = session.get('name', '')
-        dob  = session.get('dob', '')
-        tob  = session.get('tob', '')
-        city = session.get('city', '')
+        name  = session.get('name', '')
+        day   = int(session.get('day', 1))
+        month = int(session.get('month', 1))
+        year  = int(session.get('year', 2000))
+        tob   = session.get('tob', '')
+        city  = session.get('city', '')
 
-        # Parse date and time
-        year, month, day = map(int, dob.split("-"))
-        hour, minute     = map(int, tob.split(":"))
-
-        # Get coordinates
-        lat, lon = get_city_coords(city)
+        hour, minute = map(int, tob.split(":"))
+        lat, lon     = get_city_coords(city)
 
         # Convert to UTC
         dt       = datetime(year, month, day, hour, minute)
@@ -157,16 +150,16 @@ def results():
             dt_utc.hour + dt_utc.minute / 60.0
         )
 
-        # Moon and Saturn positions
+        # Moon and Saturn
         moon   = swe.calc_ut(jd, swe.MOON,   swe.FLG_SWIEPH | swe.FLG_SIDEREAL)[0][0] % 360
         saturn = swe.calc_ut(jd, swe.SATURN, swe.FLG_SWIEPH | swe.FLG_SIDEREAL)[0][0] % 360
 
         # Nakshatra, Pada, Rasi
-        nak_span        = 360 / 27
-        nak_index       = int(moon / nak_span)
+        nak_span         = 360 / 27
+        nak_index        = int(moon / nak_span)
         degrees_into_nak = moon % nak_span
-        pada            = int(degrees_into_nak / (nak_span / 4)) + 1
-        rasi_index      = int(moon / 30)
+        pada             = int(degrees_into_nak / (nak_span / 4)) + 1
+        rasi_index       = int(moon / 30)
 
         # Lagna
         houses = swe.houses_ex(jd, lat, lon, b'P', swe.FLG_SWIEPH | swe.FLG_SIDEREAL)
@@ -190,7 +183,7 @@ def results():
         elif house_from_moon == 2:
             shani_status = "సాడేసాటి - దశ 3 (చంద్రుని నుండి 2వ స్థానం)"
 
-        # Dasha calculation
+        # Dasha
         birth_md_index = nak_index % 9
         birth_md       = dasha_sequence[birth_md_index]
         balance_years  = (1 - (degrees_into_nak / nak_span)) * dasha_years[birth_md]
@@ -207,11 +200,10 @@ def results():
             running_md = dasha_sequence[idx]
 
         return render_template(
-            "results.html",
+            "result.html",
             name=name,
-            dob=dob,
-            tob=tob,
-            city=city,
+            day=day, month=month, year=year,
+            tob=tob, city=city,
             nakshatra=nakshatras[nak_index],
             pada=pada,
             rasi=rasi_list[rasi_index],
@@ -222,11 +214,11 @@ def results():
         )
 
     except Exception as e:
-        print(f"Result error: {e}")
+        import traceback
+        print(f"Result error: {traceback.format_exc()}")
         return f"<h3>లోపం జరిగింది: {str(e)}</h3><a href='/'>తిరిగి వెళ్ళు</a>", 500
 
 # ── Start ─────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
-            
