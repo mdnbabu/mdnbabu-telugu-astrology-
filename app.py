@@ -14,20 +14,22 @@ def get_razorpay_client():
     key_secret = os.environ.get("RAZORPAY_KEY_SECRET", "")
     return razorpay.Client(auth=(key_id, key_secret))
 
-# ── Load cities – returns flat list of city names ────────────────────────────
+# ── Load cities – returns both Telugu AND English names ──────────────────────
 def load_cities():
     try:
         with open('cities.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
         city_list = []
         for state, cities in data.items():
-            for city_name in cities:
-                city_list.append(city_name)
+            for city_name, city_info in cities.items():
+                city_list.append(city_name)           # Telugu: హైదరాబాద్
+                if "roman" in city_info:
+                    city_list.append(city_info["roman"])  # English: Hyderabad
         city_list.sort()
         return city_list
     except Exception as e:
         print(f"cities.json error: {e}")
-        return ["విజయవాడ", "హైదరాబాద్", "గుంటూరు", "విశాఖపట్నం", "తిరుపతి"]
+        return ["విజయవాడ", "Vijayawada", "హైదరాబాద్", "Hyderabad", "గుంటూరు", "Guntur"]
 
 # ── Keep Render awake ─────────────────────────────────────────────────────────
 @app.route('/ping')
@@ -49,8 +51,8 @@ def calculate():
         session['tob']  = request.form.get("tob", "")
         session['city'] = request.form.get("city", "")
 
-        # ✅ TEST: ₹1 = 100 paise
-        # For live change 100 → 1100 (₹11)
+        # ✅ TEST: Rs1 = 100 paise
+        # For live change 100 to 1100 (Rs11)
         amount = 100
 
         client = get_razorpay_client()
