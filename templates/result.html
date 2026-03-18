@@ -5,15 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>మీ జాతక ఫలితాలు</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #f0f2f5; padding: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; }
         .report-card { background: white; max-width: 450px; margin: auto; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .header { background: #6a0dad; color: white; padding: 20px; text-align: center; }
+        .header h2 { font-size: 22px; }
         .content { padding: 25px; }
-        .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .section-title { background: #6a0dad; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; margin: 16px 0 10px; }
+        .row { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid #eee; }
+        .row:last-child { border-bottom: none; }
         .label { font-weight: bold; color: #555; }
         .value { color: #2e7d32; font-weight: bold; }
-        .shani-box { margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 10px; border-left: 5px solid #ff9800; font-size: 14px; }
-        .footer { text-align: center; padding: 20px; font-size: 13px; color: #888; }
+        .shani-box { margin-top: 16px; padding: 15px; background: #fff3e0; border-radius: 10px; border-left: 5px solid #ff9800; font-size: 14px; }
+        .back-btn { display: block; margin: 20px 25px; padding: 13px; background: #6a0dad; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; font-family: inherit; }
+        .back-btn:hover { background: #7e22ce; }
+        .footer { text-align: center; padding: 15px 20px; font-size: 12px; color: #888; }
     </style>
 </head>
 <body>
@@ -21,33 +27,39 @@
 <div class="report-card">
     <div class="header">
         <h2>జాతక ఫలితాలు</h2>
+        <p style="font-size:14px; margin-top:4px; opacity:0.9">{{ name }} గారి జన్మపత్రిక</p>
     </div>
+
     <div class="content">
-        <div class="row">
-            <span class="label">నక్షత్రం:</span>
-            <span class="value">{{ nakshatra }}</span>
-        </div>
-        <div class="row">
-            <span class="label">పాదం:</span>
-            <span class="value">{{ pada }}</span>
-        </div>
-        <div class="row">
-            <span class="label">రాశి:</span>
-            <span class="value">{{ rasi }}</span>
-        </div>
-        <div class="row">
-            <span class="label">లగ్నం:</span>
-            <span class="value">{{ lagna }}</span>
-        </div>
-        
+
+        <!-- Birth Details -->
+        <div class="section-title">జన్మ వివరాలు</div>
+        <div class="row"><span class="label">పేరు</span>           <span class="value">{{ name }}</span></div>
+        <div class="row"><span class="label">పుట్టిన తేదీ</span>  <span class="value">{{ dob }}</span></div>
+        <div class="row"><span class="label">పుట్టిన సమయం</span>  <span class="value">{{ tob }}</span></div>
+        <div class="row"><span class="label">పుట్టిన ప్రాంతం</span><span class="value">{{ city }}</span></div>
+
+        <!-- Astro Results -->
+        <div class="section-title">జ్యోతిష్య వివరాలు</div>
+        <div class="row"><span class="label">నక్షత్రం</span>       <span class="value">{{ nakshatra }}</span></div>
+        <div class="row"><span class="label">పాదం</span>            <span class="value">{{ pada }}</span></div>
+        <div class="row"><span class="label">రాశి</span>            <span class="value">{{ rasi }}</span></div>
+        <div class="row"><span class="label">లగ్నం</span>           <span class="value">{{ lagna }}</span></div>
+        <div class="row"><span class="label">జన్మ మహాదశ</span>     <span class="value">{{ birth_md }}</span></div>
+        <div class="row"><span class="label">నడుస్తున్న దశ</span>   <span class="value">{{ running_md }}</span></div>
+
         <div class="shani-box">
             <strong>శని ప్రభావం:</strong><br>
             {{ shani_status }}
         </div>
+
     </div>
+
+    <a href="/" class="back-btn">మళ్ళీ ప్రయత్నించండి</a>
+
     <div class="footer">
         మరింత సమాచారం కోసం మమ్మల్ని సంప్రదించండి.<br>
-        వేదిక్ ఆస్ట్రో సొల్యూషన్స్
+        వేదిక్ ఆస్ట్రో సొల్యూషన్స్ | +91 8985368696
     </div>
 </div>
 
