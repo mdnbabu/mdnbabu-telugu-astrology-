@@ -207,7 +207,7 @@ def results():
             running_md = dasha_sequence[idx]
 
         return render_template(
-            "result.html",
+            "results.html",
             name=name,
             dob=dob,
             tob=tob,
