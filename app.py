@@ -15,7 +15,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "vedic-telugu-2026")
 
 # Swiss Ephemeris setup
 swe.set_sid_mode(swe.SIDM_LAHIRI)
-swe.set_ephe_path(".")
+swe.set_ephe_path(" ")
 
 # ── Razorpay – created inside route, NOT at startup ──────────────────────────
 def get_razorpay_client():
