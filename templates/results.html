@@ -34,19 +34,49 @@
 
         <!-- Birth Details -->
         <div class="section-title">జన్మ వివరాలు</div>
-        <div class="row"><span class="label">పేరు</span>           <span class="value">{{ name }}</span></div>
-        <div class="row"><span class="label">పుట్టిన తేదీ</span>  <span class="value">{{ dob }}</span></div>
-        <div class="row"><span class="label">పుట్టిన సమయం</span>  <span class="value">{{ tob }}</span></div>
-        <div class="row"><span class="label">పుట్టిన ప్రాంతం</span><span class="value">{{ city }}</span></div>
+        <div class="row">
+            <span class="label">పేరు</span>
+            <span class="value">{{ name }}</span>
+        </div>
+        <div class="row">
+            <span class="label">పుట్టిన తేదీ</span>
+            <span class="value">{{ day }}/{{ month }}/{{ year }}</span>
+        </div>
+        <div class="row">
+            <span class="label">పుట్టిన సమయం</span>
+            <span class="value">{{ tob }}</span>
+        </div>
+        <div class="row">
+            <span class="label">పుట్టిన ప్రాంతం</span>
+            <span class="value">{{ city }}</span>
+        </div>
 
         <!-- Astro Results -->
         <div class="section-title">జ్యోతిష్య వివరాలు</div>
-        <div class="row"><span class="label">నక్షత్రం</span>       <span class="value">{{ nakshatra }}</span></div>
-        <div class="row"><span class="label">పాదం</span>            <span class="value">{{ pada }}</span></div>
-        <div class="row"><span class="label">రాశి</span>            <span class="value">{{ rasi }}</span></div>
-        <div class="row"><span class="label">లగ్నం</span>           <span class="value">{{ lagna }}</span></div>
-        <div class="row"><span class="label">జన్మ మహాదశ</span>     <span class="value">{{ birth_md }}</span></div>
-        <div class="row"><span class="label">నడుస్తున్న దశ</span>   <span class="value">{{ running_md }}</span></div>
+        <div class="row">
+            <span class="label">నక్షత్రం</span>
+            <span class="value">{{ nakshatra }}</span>
+        </div>
+        <div class="row">
+            <span class="label">పాదం</span>
+            <span class="value">{{ pada }}</span>
+        </div>
+        <div class="row">
+            <span class="label">రాశి</span>
+            <span class="value">{{ rasi }}</span>
+        </div>
+        <div class="row">
+            <span class="label">లగ్నం</span>
+            <span class="value">{{ lagna }}</span>
+        </div>
+        <div class="row">
+            <span class="label">జన్మ మహాదశ</span>
+            <span class="value">{{ birth_md }}</span>
+        </div>
+        <div class="row">
+            <span class="label">నడుస్తున్న దశ</span>
+            <span class="value">{{ running_md }}</span>
+        </div>
 
         <div class="shani-box">
             <strong>శని ప్రభావం:</strong><br>
