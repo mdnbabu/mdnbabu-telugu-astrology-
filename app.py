@@ -3,84 +3,42 @@
 from flask import Flask, render_template, request, session
 import json
 import os
-import math
 import razorpay
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "vedic-telugu-2026")
 
-# ── Razorpay client – created INSIDE route, NOT at startup ───────────────────
-# This prevents app crash if keys are missing at startup
+# ── Razorpay client – created INSIDE route to prevent startup crash ──────────
 def get_razorpay_client():
     key_id     = os.environ.get("RAZORPAY_KEY_ID", "")
     key_secret = os.environ.get("RAZORPAY_KEY_SECRET", "")
     return razorpay.Client(auth=(key_id, key_secret))
 
-# ── Load cities from nested JSON ─────────────────────────────────────────────
+# ── Load cities – returns flat list of city names ────────────────────────────
 def load_cities():
     try:
         with open('cities.json', 'r', encoding='utf-8') as f:
             data = json.load(f)
-        flat = []
+        city_list = []
         for state, cities in data.items():
-            for city_name, info in cities.items():
-                flat.append({
-                    "name":  city_name,
-                    "state": state,
-                    "lat":   info["lat"],
-                    "lon":   info["lon"]
-                })
-        return flat
+            for city_name in cities:
+                city_list.append(city_name)
+        city_list.sort()
+        return city_list
     except Exception as e:
         print(f"cities.json error: {e}")
-        return [
-            {"name": "విజయవాడ",  "state": "ఆంధ్రప్రదేశ్", "lat": 16.5062, "lon": 80.6480},
-            {"name": "హైదరాబాద్", "state": "తెలంగాణ",      "lat": 17.3850, "lon": 78.4867},
-        ]
-
-CITIES = load_cities()
-
-# ── Haversine distance ────────────────────────────────────────────────────────
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
-    a = (math.sin(dlat/2)**2 +
-         math.cos(math.radians(lat1)) *
-         math.cos(math.radians(lat2)) *
-         math.sin(dlon/2)**2)
-    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        return ["విజయవాడ", "హైదరాబాద్", "గుంటూరు", "విశాఖపట్నం", "తిరుపతి"]
 
 # ── Keep Render awake ─────────────────────────────────────────────────────────
 @app.route('/ping')
 def ping():
     return "pong", 200
 
-# ── City search API ───────────────────────────────────────────────────────────
-@app.route('/api/cities')
-def api_cities():
-    query = request.args.get('q', '').strip()
-    lat   = request.args.get('lat', type=float)
-    lon   = request.args.get('lon', type=float)
-
-    if lat is not None and lon is not None:
-        scored = sorted(
-            [{**c, "distance_km": round(haversine(lat, lon, c["lat"], c["lon"]), 1)}
-             for c in CITIES],
-            key=lambda x: x["distance_km"]
-        )
-        return json.dumps(scored[:10], ensure_ascii=False), 200, {'Content-Type': 'application/json'}
-
-    if query:
-        results = [c for c in CITIES if query in c["name"]]
-        return json.dumps(results[:15], ensure_ascii=False), 200, {'Content-Type': 'application/json'}
-
-    return json.dumps(CITIES[:20], ensure_ascii=False), 200, {'Content-Type': 'application/json'}
-
 # ── Home page ─────────────────────────────────────────────────────────────────
 @app.route('/')
 def index():
-    return render_template("index.html")
+    cities = load_cities()
+    return render_template("index.html", cities=cities)
 
 # ── Form → Razorpay order → Payment page ─────────────────────────────────────
 @app.route('/calculate', methods=['POST'])
@@ -89,12 +47,10 @@ def calculate():
         session['name'] = request.form.get("name", "")
         session['dob']  = request.form.get("dob", "")
         session['tob']  = request.form.get("tob", "")
-        session['city'] = request.form.get("city_name", "")
-        session['lat']  = request.form.get("city_lat", "")
-        session['lon']  = request.form.get("city_lon", "")
+        session['city'] = request.form.get("city", "")
 
         # ✅ TEST: ₹1 = 100 paise
-        # For live: change 100 → 1100 (₹11)
+        # For live change 100 → 1100 (₹11)
         amount = 100
 
         client = get_razorpay_client()
@@ -133,7 +89,6 @@ def results():
     tob  = session.get('tob', '')
     city = session.get('city', '')
 
-    # TODO: Replace stubs with real Swiss Ephemeris calculations
     return render_template(
         "results.html",
         name=name,
