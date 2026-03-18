@@ -5,13 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>వేదిక్ ఆస్ట్రో సొల్యూషన్స్</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; text-align: center; padding: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding: 20px; }
         .container { background: white; max-width: 400px; margin: auto; padding: 25px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         h2 { color: #6a0dad; margin-bottom: 5px; }
-        label { display: block; margin-top: 15px; font-weight: bold; text-align: left; }
-        input { width: 100%; padding: 12px; margin-top: 5px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
-        button { background-color: #6a0dad; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; margin-top: 25px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        label { display: block; margin-top: 15px; font-weight: bold; text-align: left; font-size: 15px; }
+        input[type="text"], input[type="date"], input[type="time"] {
+            width: 100%; padding: 12px; margin-top: 5px;
+            border-radius: 8px; border: 1.5px solid #ddd;
+            font-size: 16px; font-family: inherit; outline: none;
+        }
+        input:focus { border-color: #6a0dad; }
+        button[type="submit"] {
+            background-color: #6a0dad; color: white; border: none;
+            padding: 15px; width: 100%; border-radius: 10px;
+            margin-top: 25px; font-size: 18px; font-weight: bold;
+            cursor: pointer; font-family: inherit;
+        }
+        button[type="submit"]:hover { background-color: #7e22ce; }
         .footer { margin-top: 20px; font-size: 12px; color: #888; }
+
+        /* ── City autocomplete ── */
+        .city-wrap { position: relative; }
+        #city_display { padding-right: 42px; }
+        .geo-btn {
+            position: absolute; right: 8px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            font-size: 20px; cursor: pointer; color: #6a0dad;
+        }
+        .dropdown {
+            display: none; position: absolute;
+            top: calc(100% + 3px); left: 0; right: 0;
+            background: #fff; border: 1.5px solid #ddd;
+            border-radius: 8px; max-height: 210px;
+            overflow-y: auto; z-index: 999;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+            text-align: left;
+        }
+        .dropdown.open { display: block; }
+        .dropdown-item {
+            display: block;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 15px;
+            border-bottom: 1px solid #f3f3f3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover, .dropdown-item.active {
+            background: #f3e8ff; color: #6a0dad;
+        }
+        .state-tag {
+            font-size: 11px; color: #999;
+            background: #f0f0f0; padding: 2px 6px;
+            border-radius: 10px; margin-left: 6px;
+        }
+        .dist-tag {
+            font-size: 11px; color: #6a0dad;
+            background: #ede9fe; padding: 2px 6px;
+            border-radius: 10px; margin-left: 6px;
+        }
+        .dropdown-msg {
+            padding: 12px 14px; color: #888;
+            font-size: 14px; text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -19,10 +79,12 @@
 <div class="container">
     <h2>వేదిక్ ఆస్ట్రో సొల్యూషన్స్</h2>
     <p>మీ జ్యోతిష్య వివరాలను ఇక్కడ తెలుసుకోండి</p>
-    
-    <form action="/calculate" method="POST">
+
+    <form id="astroForm" action="/calculate" method="POST">
+
         <label>పేరు:</label>
-        <input type="text" name="name" placeholder="మీ పేరు నమోదు చేయండి" required>
+        <input type="text" name="name"
+               placeholder="మీ పేరు నమోదు చేయండి" required>
 
         <label>పుట్టిన తేదీ:</label>
         <input type="date" name="dob" required>
@@ -31,37 +93,160 @@
         <input type="time" name="tob" required>
 
         <label>పుట్టిన ప్రాంతం (సమీప పట్టణం):</label>
-        <input list="city-list" name="city" placeholder="నగరం పేరు టైప్ చేయండి..." required>
-        <datalist id="city-list">
-            {% for city in cities %}
-            <option value="{{ city }}">
-            {% endfor %}
-        </datalist>
+        <div class="city-wrap">
+            <input type="text" id="city_display"
+                   autocomplete="off"
+                   placeholder="నగరం పేరు టైప్ చేయండి..."
+                   required />
+            <button type="button" class="geo-btn" id="geoBtn">📍</button>
+            <div class="dropdown" id="cityDropdown"></div>
+        </div>
 
-        <button type="submit">వివరాలు పొందండి (₹11)</button>
+        <!-- Hidden fields sent with form -->
+        <input type="hidden" id="city_name" name="city_name">
+        <input type="hidden" id="city_lat"  name="city_lat">
+        <input type="hidden" id="city_lon"  name="city_lon">
+
+        <button type="submit">వివరాలు పొందండి (₹1)</button>
     </form>
 
     <div class="footer">
-        © 2026 వేదిక్ ఆస్ట్రో సొల్యూషన్స్ | ప్రొఫెసర్ నారాయణ బాబు
+        © 2026 వేదిక్ ఆస్ట్రో సొల్యూషన్స్ | ప్రొఫెసర్ నారాయణ బాబు<br>
+        సంప్రదించండి: +91 8985368696
     </div>
 </div>
-</form>
 
-</div>
+<script>
+const cityInput  = document.getElementById('city_display');
+const dropdown   = document.getElementById('cityDropdown');
+const hiddenName = document.getElementById('city_name');
+const hiddenLat  = document.getElementById('city_lat');
+const hiddenLon  = document.getElementById('city_lon');
+const geoBtn     = document.getElementById('geoBtn');
+const form       = document.getElementById('astroForm');
 
-<div style="margin-top:30px;font-size:12px;color:#777;text-align:center">
+let debounce   = null;
+let items      = [];
+let activeIdx  = -1;
+let cityPicked = false;
 
-వేదిక్ ఆస్ట్రో సొల్యూషన్స్
-<br>
-ప్రొఫెసర్ నారాయణ బాబు
-<br>
-సంప్రదించండి: +91 918985368696
-<br>
-Email: yourmail@gmail.com
+function showList(cities, geoMode) {
+    dropdown.innerHTML = '';
+    items     = cities;
+    activeIdx = -1;
 
-</div>
+    if (!cities.length) {
+        dropdown.innerHTML = '<div class="dropdown-msg">నగరం దొరకలేదు</div>';
+        dropdown.classList.add('open');
+        return;
+    }
 
-</body>
-</html>
+    cities.forEach((c, i) => {
+        const el  = document.createElement('div');
+        el.className = 'dropdown-item';
+        const badge = geoMode
+            ? `<span class="dist-tag">${c.distance_km} km</span>`
+            : `<span class="state-tag">${c.state}</span>`;
+        el.innerHTML = `${c.name}${badge}`;
+        el.addEventListener('mousedown', e => { e.preventDefault(); pickCity(c); });
+        dropdown.appendChild(el);
+    });
+
+    dropdown.classList.add('open');
+}
+
+function pickCity(c) {
+    cityInput.value  = c.name;
+    hiddenName.value = c.name;
+    hiddenLat.value  = c.lat;
+    hiddenLon.value  = c.lon;
+    cityPicked       = true;
+    cityInput.style.borderColor = '#6a0dad';
+    closeList();
+}
+
+function closeList() {
+    dropdown.classList.remove('open');
+    dropdown.innerHTML = '';
+    activeIdx = -1;
+    items     = [];
+}
+
+async function fetchCities(query) {
+    try {
+        const res  = await fetch(`/api/cities?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        showList(data, false);
+    } catch(e) { console.error(e); }
+}
+
+cityInput.addEventListener('input', () => {
+    const q = cityInput.value.trim();
+    cityPicked = false;
+    hiddenName.value = hiddenLat.value = hiddenLon.value = '';
+    cityInput.style.borderColor = '';
+    clearTimeout(debounce);
+    if (!q) { closeList(); return; }
+    dropdown.innerHTML = '<div class="dropdown-msg">వెతుకుతున్నాము...</div>';
+    dropdown.classList.add('open');
+    debounce = setTimeout(() => fetchCities(q), 250);
+});
+
+cityInput.addEventListener('blur',  () => setTimeout(closeList, 150));
+cityInput.addEventListener('focus', () => {
+    if (cityInput.value.trim() && !cityPicked) fetchCities(cityInput.value.trim());
+});
+
+cityInput.addEventListener('keydown', e => {
+    const els = dropdown.querySelectorAll('.dropdown-item');
+    if (!els.length) return;
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIdx = Math.min(activeIdx + 1, els.length - 1);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIdx = Math.max(activeIdx - 1, 0);
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (activeIdx >= 0 && items[activeIdx]) pickCity(items[activeIdx]);
+        return;
+    } else if (e.key === 'Escape') {
+        closeList(); return;
+    }
+    els.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+    if (activeIdx >= 0) els[activeIdx].scrollIntoView({ block: 'nearest' });
+});
+
+// GPS button
+geoBtn.addEventListener('click', () => {
+    if (!navigator.geolocation) { alert('GPS మద్దతు లేదు'); return; }
+    geoBtn.textContent = '⏳';
+    geoBtn.disabled = true;
+    navigator.geolocation.getCurrentPosition(
+        async pos => {
+            try {
+                const { latitude: lat, longitude: lon } = pos.coords;
+                const res  = await fetch(`/api/cities?lat=${lat}&lon=${lon}`);
+                const data = await res.json();
+                if (data.length) { cityInput.value = ''; showList(data, true); }
+            } catch(e) { alert('నగరాలు లోడ్ కాలేదు'); }
+            geoBtn.textContent = '📍'; geoBtn.disabled = false;
+        },
+        () => { alert('GPS అందుబాటులో లేదు'); geoBtn.textContent = '📍'; geoBtn.disabled = false; },
+        { timeout: 8000 }
+    );
+});
+
+// Validate city picked before submit
+form.addEventListener('submit', e => {
+    if (!hiddenLat.value) {
+        e.preventDefault();
+        cityInput.style.borderColor = 'red';
+        cityInput.focus();
+        alert('దయచేసి జాబితా నుండి నగరాన్ని ఎంచుకోండి');
+    }
+});
+</script>
+
 </body>
 </html>
