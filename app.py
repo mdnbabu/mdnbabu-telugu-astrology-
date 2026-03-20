@@ -116,7 +116,7 @@ def calculate():
 
     except Exception as e:
         print(f"Calculate error: {e}")
-        return f"<h3>లోపం జరిగింది: {str(e)}</h3><a href='/'>తిరిగి వెళ్ళు</a>", 1100
+        return f"<h3>లోపం జరిగింది: {str(e)}</h3><a href='/'>తిరిగి వెళ్ళు</a>", 500
 
 # ── Results ───────────────────────────────────────────────────────────────────
 @app.route('/results', methods=['GET', 'POST'])
