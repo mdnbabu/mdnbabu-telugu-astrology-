@@ -97,7 +97,7 @@ def calculate():
         session['city']  = request.form.get("city", "")
 
         # ✅ LIVE: ₹1 = 100 paise
-        amount = 500
+        amount = 1100
 
         client = get_razorpay_client()
         order  = client.order.create({
@@ -116,7 +116,7 @@ def calculate():
 
     except Exception as e:
         print(f"Calculate error: {e}")
-        return f"<h3>లోపం జరిగింది: {str(e)}</h3><a href='/'>తిరిగి వెళ్ళు</a>", 500
+        return f"<h3>లోపం జరిగింది: {str(e)}</h3><a href='/'>తిరిగి వెళ్ళు</a>", 1100
 
 # ── Results ───────────────────────────────────────────────────────────────────
 @app.route('/results', methods=['GET', 'POST'])
