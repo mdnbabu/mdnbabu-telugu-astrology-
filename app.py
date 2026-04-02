@@ -166,23 +166,25 @@ def results():
         asc    = houses[0][0] % 360
         lagna  = rasi_list[int(asc / 30)]
 
-        # Shani Dosha
-        moon_sign_num   = int(moon / 30) + 1
-        saturn_sign_num = int(saturn / 30) + 1
-        house_from_moon = (saturn_sign_num - moon_sign_num) % 12 + 1
+        # Shani Dosha (Corrected)
+moon_sign_num   = int(moon / 30) + 1
+saturn_sign_num = int(saturn / 30) + 1
+house_from_moon = (saturn_sign_num - moon_sign_num) % 12 + 1
 
-        shani_status = "శని గోచర దోషం లేదు"
-        if house_from_moon == 8:
-            shani_status = "అష్టమ శని (చంద్రుని నుండి 8వ స్థానంలో శని)"
-        elif house_from_moon == 4:
-            shani_status = "కంటక శని (చంద్రుని నుండి 4వ స్థానంలో శని)"
-        elif house_from_moon == 1:
-            shani_status = "జన్మ శని (చంద్ర రాశిలో శని)"
-        elif house_from_moon == 12:
-            shani_status = "సాడేసాటి - దశ 1 (చంద్రుని నుండి 12వ స్థానం)"
-        elif house_from_moon == 2:
-            shani_status = "సాడేసాటి - దశ 3 (చంద్రుని నుండి 2వ స్థానం)"
-
+if house_from_moon == 12:
+    shani_status = "⚠️ సాడేసాటి ప్రారంభ దశ (చంద్రుని నుండి 12వ స్థానం)"
+elif house_from_moon == 1:
+    shani_status = "⚠️ సాడేసాటి మధ్య దశ (చంద్ర రాశిలో శని)"
+elif house_from_moon == 2:
+    shani_status = "⚠️ సాడేసాటి చివరి దశ (చంద్రుని నుండి 2వ స్థానం)"
+elif house_from_moon == 4:
+    shani_status = "కంటక శని (చంద్రుని నుండి 4వ స్థానం)"
+elif house_from_moon == 8:
+    shani_status = "అష్టమ శని (చంద్రుని నుండి 8వ స్థానం)"
+else:
+    shani_status = "శని గోచర దోషం లేదు"
+         
+        
         # Dasha
         birth_md_index = nak_index % 9
         birth_md       = dasha_sequence[birth_md_index]
