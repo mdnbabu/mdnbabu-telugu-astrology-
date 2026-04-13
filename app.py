@@ -98,8 +98,8 @@ def calculate():
         session['tob']   = request.form.get("tob", "")
         session['city']  = request.form.get("city", "")
 
-        # ₹11 = 1100 paise
-        amount = 1100
+        # ₹05 = 500 paise
+        amount = 500
 
         client = get_razorpay_client()
         order  = client.order.create({
