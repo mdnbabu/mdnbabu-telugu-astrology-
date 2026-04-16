@@ -6,7 +6,18 @@ import razorpay
 import swisseph as swe
 import pytz
 import traceback
+def get_count():
+    if not os.path.exists("telugu_count.txt"):
+        with open("telugu_count.txt", "w") as f:
+            f.write("0")
+    with open("telugu_count.txt", "r") as f:
+        return int(f.read())
 
+def update_count():
+    count = get_count() + 1
+    with open("telugu_count.txt", "w") as f:
+        f.write(str(count))
+    return count
 from datetime import datetime
 from flask import Flask, render_template, request, session
 
