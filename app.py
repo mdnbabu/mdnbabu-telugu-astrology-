@@ -96,8 +96,9 @@ def ping():
 
 @app.route('/')
 def index():
+    visitors = update_count()
     cities = load_cities()
-    return render_template("index.html", cities=cities)
+    return render_template("index.html", cities=cities, visitors=visitors)
 
 @app.route('/calculate', methods=['POST'])
 def calculate():
